@@ -1,6 +1,6 @@
 #!/bin/bash
 
-#SBATCH --mail-user=charles.johnson@accre.vanderbilt.edu
+#SBATCH --mail-user=your_email@accre.vanderbilt.edu
 #SBATCH --mail-type=ALL
 #SBATCH --nodes=1
 #SBATCH --ntasks=1
