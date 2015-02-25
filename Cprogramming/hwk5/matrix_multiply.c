@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 
    // TODO: parse input arguments
 
-   int * matrix_in, matrix_out;  // declare input and output matrices
+   int * matrix_in, * matrix_out;  // declare input and output matrices
    // TODO: dynamically allocate space for matrix_in and matrix_out
 
    // TODO: call function to read data from file and copy into matrix_A
