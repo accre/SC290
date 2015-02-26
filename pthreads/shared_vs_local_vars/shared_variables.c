@@ -37,7 +37,7 @@ void fillOutArray()
    srand((unsigned) time(&t)); // initialize random number generator
    int i;
    for ( i=0; i < ARRAY_SIZE ; i++) {
-      gArray[i] = rand() % 1000; // random int between 1 and 1000
+      gArray[i] = rand() % 1000; // random int between 0 and 1000
    }
 
 }
