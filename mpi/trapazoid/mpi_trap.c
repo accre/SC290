@@ -36,14 +36,14 @@ double f(double x);
 
 int main(int argc, char ** argv) {
 
-   int my_rank, comm_sz, n = 1000000, local_n;   
+   int my_rank, comm_sz, n = 100000000, local_n;   
    double a = 0.0, b = 3.0, h, local_a, local_b;
    double local_int = 0.0, total_int = 0.0;
    int source; 
 
    /* Let the system do what it needs to start up MPI */
    MPI_Init(&argc, &argv);
-
+ 
    /* Get my process rank */
    MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
