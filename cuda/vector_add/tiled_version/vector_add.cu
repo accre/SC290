@@ -3,17 +3,14 @@
 #include <stdlib.h>
 #include <timer.h> // in CUDA SDK
 
-/* The GTX 480 can handle a max of 1024
-   threads per block. Since we're only using
-   a single block in this code, the max array
-   size we can use is 1024 */
 #define SIZE 1024
+#define BLOCKSIZE 32
 
 // Device function (i.e. kernel)
 __global__ void VecAdd(float * A, float * B, float * C, int N)
 {
 
-   int i = threadIdx.x;
+   int i = blockDim.x * blockIdx.x + threadIdx.x;
    if ( i < N ) {
       C[i] = A[i] + B[i];
    }
@@ -94,7 +91,7 @@ int main( int argc, char ** argv )
    float * d_A, * d_B, * d_C;
    cudaError_t rc; // return code from cuda functions
    rc = cudaMalloc(&d_A, vec_bytes);
-   if ( rc ) printf("%s\n",cudaGetErrorString(rc));
+   if ( rc ) printf("Error from cudaMalloc: %s\n",cudaGetErrorString(rc));
    cudaMalloc(&d_B, vec_bytes);
    cudaMalloc(&d_C, vec_bytes);
 
@@ -103,8 +100,8 @@ int main( int argc, char ** argv )
    cudaMemcpy(d_B, h_B, vec_bytes, cudaMemcpyHostToDevice);
 
    // dim3 is a 3-element struct with elements x, y, z (all ints)
-   dim3 threadsPerBlock(SIZE); // SIZE x 1 x 1
-   dim3 blocksPerGrid(1); // 1 x 1 x 1
+   dim3 threadsPerBlock(BLOCKSIZE);
+   dim3 blocksPerGrid( (SIZE + BLOCKSIZE - 1) / BLOCKSIZE );
    // launch vector addition kernel!
    StartTimer();
    VecAdd<<< blocksPerGrid, threadsPerBlock >>>(d_A, d_B, d_C, SIZE);
