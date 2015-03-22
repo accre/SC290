@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define SIZE 1024
+#define SIZE 1000024
 #define BLOCKSIZE 32
 
 // Device function (i.e. kernel)
@@ -75,6 +75,10 @@ void printVector( float * vec, int vec_length )
 // program execution begins here
 int main( int argc, char ** argv )
 {
+   cudaEvent_t start, stop;
+   cudaEventCreate(&start);
+   cudaEventCreate(&stop);
+
    size_t vec_bytes = SIZE * sizeof(float);
 
    // host arrays
@@ -102,7 +106,13 @@ int main( int argc, char ** argv )
    dim3 threadsPerBlock(BLOCKSIZE);
    dim3 blocksPerGrid( (SIZE + BLOCKSIZE - 1) / BLOCKSIZE );
    // launch vector addition kernel!
+   cudaEventRecord(start);
    VecAdd<<< blocksPerGrid, threadsPerBlock >>>(d_A, d_B, d_C, SIZE);
+   cudaEventRecord(stop);
+   cudaEventSynchronize(stop);
+   float milliseconds = 0;
+   cudaEventElapsedTime(&milliseconds, start, stop);
+   printf("kernel time (ms) : %7.5f\n",milliseconds);
 
    // copy results to host
    cudaMemcpy(h_C, d_C, vec_bytes, cudaMemcpyDeviceToHost);
@@ -110,8 +120,18 @@ int main( int argc, char ** argv )
 
    // verify that we got correct results
    float * gold_C = (float *)malloc( vec_bytes );
+   cudaEventRecord(start);
    vecAddCPU( h_A, h_B, gold_C, SIZE );
+   cudaEventRecord(stop);
+   cudaEventSynchronize(stop);
+   milliseconds = 0;
+   cudaEventElapsedTime(&milliseconds, start, stop);
+   printf("cpu function time (ms) : %7.5f\n",milliseconds);
    compareVecs( gold_C, h_C, SIZE );
+
+   // clean up timer variables
+   cudaEventDestroy(start);
+   cudaEventDestroy(stop);
 
    // free memory on device
    cudaFree(d_A);
