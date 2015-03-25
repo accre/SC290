@@ -3,7 +3,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-#define SIZE 256
+#define SIZE 512
 #define TILE_WIDTH 16
 
 // kernel definition
