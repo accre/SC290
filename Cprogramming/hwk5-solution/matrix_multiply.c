@@ -109,5 +109,9 @@ int main(int argc, char **argv)
    // write results to stdout
    printResult( matrix_B, n );   
 
+   // free space
+   free(matrix_A);
+   free(matrix_B);
+
    return 0;
 }
